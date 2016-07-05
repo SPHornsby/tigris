@@ -27,8 +27,13 @@ var makeItemBar = function(item, target) {
   var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
   var itemDetails = $("<div>").addClass("item-details col-md-8");
   var itemTitle = $("<div>").addClass("item-title row").text(item.name);
-  var itemPrice = $("<div>").addClass("item-price row").text(item.price);
-  $(itemDetails).append(itemTitle, itemPrice);
+  var creator = "--";
+  if (item.creator.length > 0) {
+    creator = item.creator;
+  }
+  var itemCreator = $("<div>").addClass("item-creator row").text(creator);
+  var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
+  $(itemDetails).append(itemTitle, itemCreator, itemPrice);
   $(itemBar).append(itemImage, itemDetails);
   $(target).append(itemBar);
 };
