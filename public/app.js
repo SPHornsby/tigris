@@ -23,10 +23,13 @@ var displayResults = function(results) {
   });
 };
 var makeItemBar = function(item, target) {
-  var itemBar = $("<div>").addClass("item-bar col-md-12");
-  var priceDisplay = item.price.toString(10);
-  var itemDetails = $("<div>").addClass("item-details col-md-8 col-md-offset-2").text(`Item ${item.name} costs: $${item.price}`);
-  $(itemBar).append(itemDetails);
+  var itemBar = $("<div>").addClass("item-bar col-md-11");
+  var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
+  var itemDetails = $("<div>").addClass("item-details col-md-8");
+  var itemTitle = $("<div>").addClass("item-title row").text(item.name);
+  var itemPrice = $("<div>").addClass("item-price row").text(item.price);
+  $(itemDetails).append(itemTitle, itemPrice);
+  $(itemBar).append(itemImage, itemDetails);
   $(target).append(itemBar);
 };
 

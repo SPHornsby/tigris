@@ -3,5 +3,14 @@ nav {
   padding-bottom: 20px;
 }
 .item-bar {
-  min-height: 70px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid grey;
+}
+.item-title {
+  font-weight: bold;
+  font-size: 1.25em;
+}
+.item-price {
+  font-style: italic;
 }
