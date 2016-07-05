@@ -19,11 +19,17 @@ var displayResults = function(results) {
   var target = $("#resultList");
   $(target).empty();
   results.forEach(function(item) {
-
-    var listItem = $("<li>").text(`Item ${item.name} costs: $${item.price}`);
-    $(target).append(listItem);
+    makeItemBar(item, target);
   });
-}
+};
+var makeItemBar = function(item, target) {
+  var itemBar = $("<div>").addClass("item-bar col-md-12");
+  var priceDisplay = item.price.toString(10);
+  var itemDetails = $("<div>").addClass("item-details col-md-8 col-md-offset-2").text(`Item ${item.name} costs: $${item.price}`);
+  $(itemBar).append(itemDetails);
+  $(target).append(itemBar);
+};
+
 $(".search-button").on("click", function(e) {
   var input = $("#search-input").val();
   submitSearch(input);

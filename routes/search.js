@@ -4,9 +4,6 @@ search.get("/", function(req, res) {
   var query = req.query;
   var searchTerm = req.query.q;
   var result = getItem(items, searchTerm);
-  console.log(query);
-  console.log(items);
-  console.log(result);
   var stringResult = JSON.stringify(result);
   res.send(stringResult);
 });

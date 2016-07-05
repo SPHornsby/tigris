@@ -2,3 +2,6 @@ nav {
   padding-top: 20px;
   padding-bottom: 20px;
 }
+.item-bar {
+  min-height: 70px;
+}
