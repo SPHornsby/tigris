@@ -10,7 +10,7 @@ search.get("/", function(req, res) {
 
 
 var getItem = function(list, searchTerm) {
-  return list.filter(item => item.name === searchTerm);
+  return list.filter(item => item.keywords.indexOf(searchTerm) != -1);
 };
 
 module.exports = search;
