@@ -31,7 +31,7 @@ var makeItemBar = function(item, target) {
   }
   var itemCreator = $("<div>").addClass("item-creator row").text(creator);
   var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
-  var cartButton = $("<button>").addClass("btn btn-success add-button").attr("data-name", item.id).text("Add to Cart");
+  var cartButton = $("<button>").addClass("btn btn-success add-button").attr("data-id", item.id).text("Add to Cart");
   $(itemDetails).append(itemTitle, itemCreator, itemPrice);
   $(itemBar).append(itemImage, itemDetails, cartButton);
   $(target).append(itemBar);
@@ -41,6 +41,18 @@ var swap = function(next) {
   $(current).addClass("hidden");
   $(next).removeClass("hidden")
     .addClass("current");
+};
+var addToCart = function(item) {
+  console.log(item);
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/cart");
+  var object = {};
+  object.dataID= item;
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send(JSON.stringify(object));
+  xhr.addEventListener("load", function(){
+    console.log(xhr.responseText);
+  });
 };
 $(".search-button").on("click", function() {
   var input = $("#search-input").val();
@@ -59,5 +71,6 @@ $("#home-button").on("click", function() {
   swap($(".home"));
 });
 $("#resultList").on("click", ".add-button", function(e) {
-  console.log(e.target.attributes["data-name"]);
+  var item = e.target.attributes["data-id"].value;
+  addToCart(item);
 });
