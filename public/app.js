@@ -41,4 +41,11 @@ var makeItemBar = function(item, target) {
 $(".search-button").on("click", function(e) {
   var input = $("#search-input").val();
   submitSearch(input);
-})
+});
+$("#search-input").on("keypress", function(e) {
+  console.log(e);
+  if (e.keyCode === 13) {
+    var input = $("#search-input").val();
+    submitSearch(input);
+  }
+});
