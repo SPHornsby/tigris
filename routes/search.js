@@ -16,12 +16,10 @@ var completeSearch = function(list, searchTerm) {
   if (result.length > 0) {
     return result;
   } else {
-    console.log("else");
     var properties = ["name", "creator", "keywords"];
-    var deep = _.chain(properties).map(function(property) {
+    return _.chain(properties).map(function(property) {
       return searchByProperty(list, property, searchTerm);
     }).flatten().uniq().value();
-    return deep;
   }
 };
 var initialSearch = function(list, searchTerm, property) {
