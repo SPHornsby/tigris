@@ -1,4 +1,5 @@
 var submitSearch = function(term) {
+  $("#search-input").val("");
   var xhr = new XMLHttpRequest();
   xhr.open("GET", `/search?q=${term}`);
   xhr.send();
@@ -22,7 +23,7 @@ var displayResults = function(results) {
 var makeItemBar = function(item, target) {
   var itemBar = $("<div>").addClass("item-bar col-md-11");
   var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
-  var itemDetails = $("<div>").addClass("item-details col-md-8");
+  var itemDetails = $("<div>").addClass("item-details col-md-4");
   var itemTitle = $("<div>").addClass("item-title row").text(item.name);
   var creator = "--";
   if (item.creator.length > 0) {
@@ -30,8 +31,9 @@ var makeItemBar = function(item, target) {
   }
   var itemCreator = $("<div>").addClass("item-creator row").text(creator);
   var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
+  var cartButton = $("<button>").addClass("btn btn-success add-button").attr("data-name", item.id).text("Add to Cart");
   $(itemDetails).append(itemTitle, itemCreator, itemPrice);
-  $(itemBar).append(itemImage, itemDetails);
+  $(itemBar).append(itemImage, itemDetails, cartButton);
   $(target).append(itemBar);
 };
 var swap = function(next) {
@@ -39,7 +41,7 @@ var swap = function(next) {
   $(current).addClass("hidden");
   $(next).removeClass("hidden")
     .addClass("current");
-}
+};
 $(".search-button").on("click", function() {
   var input = $("#search-input").val();
   submitSearch(input);
@@ -55,4 +57,7 @@ $("#cart-button").on("click", function() {
 });
 $("#home-button").on("click", function() {
   swap($(".home"));
+});
+$("#resultList").on("click", ".add-button", function(e) {
+  console.log(e.target.attributes["data-name"]);
 });

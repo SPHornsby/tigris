@@ -3,6 +3,7 @@ var items = require("../data/items.js").data;
 var _ = require("underscore");
 search.get("/", function(req, res) {
   var searchTerm = req.query.q.toLowerCase();
+  var cookie = req.cookies.sessionID;
   var complete = completeSearch(items, searchTerm);
   var stringResult = JSON.stringify(complete);
   res.send(stringResult);
