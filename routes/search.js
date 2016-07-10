@@ -22,9 +22,9 @@ var getItem = function(list, searchTerm) {
   //   return list.filter(item => item.keywords.indexOf(searchTerm) != -1);
   // }
   var flat = _.flatten(results);
-  // var unique = _.uniq(flat);
-  console.log(flat);
-  return flat;
+  var unique = _.uniq(flat);
+  console.log(unique);
+  return unique;
   //return list.filter(item => item.keywords.indexOf(results[0]) != -1);
 };
 
