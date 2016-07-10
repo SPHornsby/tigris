@@ -2,7 +2,6 @@ var search = require("express").Router();
 var items = require("../data/items.js").data;
 var _ = require("underscore");
 search.get("/", function(req, res) {
-  var query = req.query;
   var searchTerm = req.query.q.toLowerCase();
   var complete = completeSearch(items, searchTerm);
   var stringResult = JSON.stringify(complete);
@@ -28,10 +27,8 @@ var initialSearch = function(list, searchTerm, property) {
   });
 };
 var searchByProperty = function(list, property, term) {
-  console.log(`term ${term}`);
   var terms = term.split(" ");
   return _.map(terms, function(term) {
-    console.log(term);
     return _.filter(list, function(item) {
       var searchProperty = item[property];
       if (typeof searchProperty === "string") {
