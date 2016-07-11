@@ -3,7 +3,11 @@ var users = require("../data/users.js").data;
 
 
 var checkCookie = function(req, res, next) {
-  if (req.cookies.sessionID) {
+  console.log("checkCookie");
+  var cookie = req.cookies.sessionID;
+  if (cookie) {
+    console.log("cookie found, checking for user");
+    console.log(`cookie: ${cookie}`);
     checkForUser(cookie);
     next();
   } else {
@@ -16,8 +20,11 @@ var checkCookie = function(req, res, next) {
 
 var createUser = function(id){
   users.push({user: id, cart:[]});
+  console.log(users);
 };
 var checkForUser = function(id) {
+  console.log(id);
+  console.log("user check");
   var user = users.filter(function(user) {
     return user.user == id;
   });
