@@ -95,6 +95,7 @@ $("#search-input").on("keypress", function(e) {
   }
 });
 $("#cart-button").on("click", function() {
+  addToCart();
   swap($(".shopping-cart"));
 
 });
