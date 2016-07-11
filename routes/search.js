@@ -1,6 +1,7 @@
 var search = require("express").Router();
 var items = require("../data/items.js").data;
 var _ = require("underscore");
+
 search.get("/item", function(req, res) {
   var itemNumber = parseInt(req.query.q, 10);
   if (itemNumber === itemNumber) {
@@ -11,12 +12,15 @@ search.get("/item", function(req, res) {
     res.send();
   }
 });
+
 search.get("/", function(req, res) {
   var searchTerm = req.query.q.toLowerCase();
   var complete = completeSearch(items, searchTerm);
   var stringResult = JSON.stringify(complete);
   res.send(stringResult);
 });
+
+//functions
 var completeSearch = function(list, searchTerm) {
   var fields = ["name", "creator"];
   var result = _.chain(fields).map(function(field) {
@@ -36,14 +40,17 @@ var completeSearch = function(list, searchTerm) {
     .value();
   }
 };
+
 var idSearch = function(list, itemNumber) {
   return _.find(list, item => item.id === itemNumber);
 };
+
 var initialSearch = function(list, searchTerm, property) {
   return _.filter(list, function(item) {
     return item[property] === parseInt(searchTerm, 10);
   });
 };
+
 var searchByProperty = function(list, property, term) {
   var terms = term.split(" ");
   return _.map(terms, function(term) {

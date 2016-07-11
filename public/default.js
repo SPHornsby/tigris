@@ -13,14 +13,16 @@ var submitSearch = function(term) {
   });
 };
 var displayResults = function(results) {
-  var target = $("#resultList");
+  var target = $("#result-list");
   $(target).empty();
   results.forEach(function(item) {
-    makeItemBar(item, target);
+    makeItemBar(item, target, function(){
+      return $("<button>").addClass("btn btn-success add-button").attr("data-id", item.id).text("Add to Cart");
+    });
   });
   swap($(".results"));
 };
-var makeItemBar = function(item, target) {
+var makeItemBar = function(item, target, callback) {
   var itemBar = $("<div>").addClass("item-bar col-md-11");
   var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
   var itemDetails = $("<div>").addClass("item-details col-md-4");
@@ -31,9 +33,10 @@ var makeItemBar = function(item, target) {
   }
   var itemCreator = $("<div>").addClass("item-creator row").text(creator);
   var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
-  var cartButton = $("<button>").addClass("btn btn-success add-button").attr("data-id", item.id).text("Add to Cart");
+  var button =callback();
+  //var cartButton = $("<button>").addClass("btn btn-success add-button").attr("data-id", item.id).text("Add to Cart");
   $(itemDetails).append(itemTitle, itemCreator, itemPrice);
-  $(itemBar).append(itemImage, itemDetails, cartButton);
+  $(itemBar).append(itemImage, itemDetails, button);
   $(target).append(itemBar);
 };
 var swap = function(next) {
@@ -55,14 +58,25 @@ var addToCart = function(item) {
   });
 };
 var showCart = function(cart) {
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "/cart")
-  xhr.addEventListener("load", function() {
-  })
+  // var xhr = new XMLHttpRequest();
+  // xhr.open("GET", "/cart")
+  // xhr.addEventListener("load", function() {
+  // })
+  console.log("showcart");
   var target = $("#cart-items");
   $(target).empty();
   cart.forEach(function(item) {
-    makeCartItem(item, target);
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", `/search/item?q=${item}`);
+    xhr.send();
+    xhr.addEventListener("load", function() {
+      console.log(xhr.responseText);
+      var item = JSON.parse(xhr.responseText);
+      makeItemBar(item, target, function() {
+        return $("<button>").addClass("btn btn-danger remove-button").attr("data-id", item.id).text("Remove from Cart");
+      });
+    })
+
   });
   swap($(".shopping-cart"));
 };
@@ -70,11 +84,14 @@ var makeCartItem = function(item, target) {
   var itemBar = $("<div>").addClass("item-bar col-md-11");
   var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
   var itemDetails = $("<div>").addClass("item-details col-md-4");
-  var itemTitle = $("<div>").addClass("item-title row").text(item);
+  var itemTitle = $("<div>").addClass("item-title row").text(item.name);
   var creator = "--";
-
-  var itemCreator = $("<div>").addClass("item-creator row").text(creator);;
-  $(itemDetails).append(itemTitle, itemCreator);
+  if (item.creator.length > 0) {
+    creator = item.creator;
+  }
+  var itemCreator = $("<div>").addClass("item-creator row").text(creator);
+  var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
+  $(itemDetails).append(itemTitle, itemCreator, itemPrice);
   $(itemBar).append(itemImage, itemDetails);
   $(target).append(itemBar);
 }
@@ -96,7 +113,11 @@ $("#cart-button").on("click", function() {
 $("#home-button").on("click", function() {
   swap($(".home"));
 });
-$("#resultList").on("click", ".add-button", function(e) {
+$("#result-list").on("click", ".add-button", function(e) {
   var item = e.target.attributes["data-id"].value;
   addToCart(item);
+});
+$("#cart-items").on("click", ".remove-button", function(e) {
+  var item = e.target.attributes["data-id"].value;
+  console.log(item);
 });
