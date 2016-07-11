@@ -3,8 +3,11 @@ var users = require("../data/users.js").data;
 
 cart.get("/", function(req, res) {
   console.log(req.cookies.sessionID);
-  console.log(users);
-  res.send();
+  var user = users.filter(function(user) {
+    return user.user == sessionID;
+  });
+
+  res.send(user.cart);
 });
 cart.post("/", function(req, res) {
   var item = JSON.parse(req.body.dataID);
