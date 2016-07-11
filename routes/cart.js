@@ -2,17 +2,15 @@ var cart = require("express").Router();
 var users = require("../data/users.js").data;
 
 cart.get("/", function(req, res) {
-  console.log(req.cookies.sessionID);
+  var sessionID = req.cookies.sessionID;
   var user = users.filter(function(user) {
     return user.user == sessionID;
   });
-
   res.send(user.cart);
 });
 cart.post("/", function(req, res) {
   var item,
-  cart;
-
+    cart;
   var sessionID = req.cookies.sessionID;
   var user = users.filter(function(user) {
     return user.user == sessionID;
@@ -21,10 +19,7 @@ cart.post("/", function(req, res) {
     item = JSON.parse(req.body.dataID);
     user[0].cart.push(item);
   }
-
-
   cart = user[0].cart;
-
   res.send(cart);
 });
 

@@ -43,7 +43,6 @@ var swap = function(next) {
     .addClass("current");
 };
 var addToCart = function(item) {
-  console.log(item);
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/cart");
   var object = {};
@@ -51,22 +50,17 @@ var addToCart = function(item) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(object));
   xhr.addEventListener("load", function() {
-    console.log(xhr.responseText);
     var cart = JSON.parse(xhr.responseText);
     showCart(cart);
   });
 };
 var showCart = function(cart) {
-  console.log("showCart");
-  //xhr to GET /cart
   var xhr = new XMLHttpRequest();
   xhr.open("GET", "/cart")
   xhr.addEventListener("load", function() {
-
   })
   var target = $("#cart-items");
   $(target).empty();
-  console.log(cart);
   cart.forEach(function(item) {
     makeCartItem(item, target);
   });
@@ -105,5 +99,4 @@ $("#home-button").on("click", function() {
 $("#resultList").on("click", ".add-button", function(e) {
   var item = e.target.attributes["data-id"].value;
   addToCart(item);
-
 });
