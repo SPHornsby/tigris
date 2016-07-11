@@ -18,7 +18,9 @@ cart.post("/", function(req, res) {
   });
   user[0].cart.push(item);
   console.log(user[0].cart);
-  res.send(req.body);
+  var cart = user[0].cart;
+  console.log(`cart ${cart}`);
+  res.send(cart);
 });
 
 module.exports = cart;
