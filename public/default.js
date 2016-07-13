@@ -57,6 +57,18 @@ var addToCart = function(item) {
     showCart(cart);
   });
 };
+var removeFromCart = function(item) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("DELETE", "/cart");
+  var object = {};
+  object.dataID= item;
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send(JSON.stringify(object));
+  xhr.addEventListener("load", function() {
+    var cart = JSON.parse(xhr.responseText);
+    showCart(cart);
+  });
+};
 var showCart = function(cart) {
   // var xhr = new XMLHttpRequest();
   // xhr.open("GET", "/cart")
@@ -119,5 +131,6 @@ $("#result-list").on("click", ".add-button", function(e) {
 });
 $("#cart-items").on("click", ".remove-button", function(e) {
   var item = e.target.attributes["data-id"].value;
-  console.log(item);
+  removeFromCart(item);
+  //console.log(item);
 });

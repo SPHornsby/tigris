@@ -9,8 +9,8 @@ cart.get("/", function(req, res) {
   res.send(user.cart);
 });
 cart.post("/", function(req, res) {
-  var item,
-    cart;
+  var item;
+  var cart;
   var sessionID = req.cookies.sessionID;
   var user = users.filter(function(user) {
     return user.user == sessionID;
@@ -20,6 +20,19 @@ cart.post("/", function(req, res) {
     user[0].cart.push(item);
   }
   cart = user[0].cart;
+  res.send(cart);
+});
+cart.delete("/", function(req, res) {
+  var item = JSON.parse(req.body.dataID);
+  var sessionID = req.cookies.sessionID;
+  var user = users.filter(function(user) {
+    return user.user == sessionID;
+  });
+  var cart = user[0].cart;
+  var index = cart.indexOf(item);
+  cart.splice(index, 1);
+  console.log(item);
+
   res.send(cart);
 });
 
