@@ -89,15 +89,14 @@ var showCart = function(cart) {
   Promise.all(cart.map(item => {
     return promise = new Promise(function(resolve, reject) {
       $.get(`/search/item?q=${item}`, function(data) {
-        console.log(data);
         resolve((data));
       }, "json")
     })
   })).then(value => {
-    console.log(value);
-    var addPrices = (pre, cur) => parseFloat(pre.price) + parseFloat(cur.price);
-    var total = value.reduce(addPrices);
-    console.log(total);
+    var prices = value.map((item) => parseFloat(item.price));
+    var final = prices.reduce((prev, curr) => {
+      return prev + curr;
+    }, 0);
   });
   swap($(".shopping-cart"));
 };
