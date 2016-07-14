@@ -70,19 +70,17 @@ var removeFromCart = function(item) {
   });
 };
 var showCart = function(cart) {
-  // var xhr = new XMLHttpRequest();
-  // xhr.open("GET", "/cart")
-  // xhr.addEventListener("load", function() {
-  // })
-  console.log("showcart");
   var target = $("#cart-items");
   $(target).empty();
+  console.log(cart.length);
+  if (cart.length > 3) {
+    $("#bottom-checkout-button").show();
+  } else $("#bottom-checkout-button").hide();
   cart.forEach(function(item) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", `/search/item?q=${item}`);
     xhr.send();
     xhr.addEventListener("load", function() {
-      console.log(xhr.responseText);
       var item = JSON.parse(xhr.responseText);
       makeItemBar(item, target, function() {
         return $("<button>").addClass("btn btn-danger remove-button").attr("data-id", item.id).text("Remove from Cart");
@@ -134,3 +132,6 @@ $("#cart-items").on("click", ".remove-button", function(e) {
   removeFromCart(item);
   //console.log(item);
 });
+$(function() {
+  $("#bottom-checkout-button").hide();
+})
