@@ -97,11 +97,19 @@ var showCart = function(cart) {
     var final = prices.reduce((prev, curr) => {
       return prev + curr;
     }, 0);
+    makeDetail(final);
   });
   swap($(".shopping-cart"));
 };
 
-
+var makeDetail = function(cartCost) {
+  var detail = $(".price-details");
+  $(detail).empty();
+  var subtotal = $("<p>").text(`Subtotal: $${cartCost}`);
+  var tax = $("<p>").text(`Tax: $${cartCost*0.075}`);
+  var total = $("<p>").text(`Total: $${cartCost*1.075}`);
+  $(detail).append(subtotal, tax, total);
+}
 
 var makeCartItem = function(item, target) {
   var itemBar = $("<div>").addClass("item-bar col-md-11");
