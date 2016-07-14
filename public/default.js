@@ -72,7 +72,6 @@ var removeFromCart = function(item) {
 var showCart = function(cart) {
   var target = $("#cart-items");
   $(target).empty();
-  console.log(cart.length);
   if (cart.length > 3) {
     $("#bottom-checkout-button").show();
   } else $("#bottom-checkout-button").hide();
@@ -86,10 +85,25 @@ var showCart = function(cart) {
         return $("<button>").addClass("btn btn-danger remove-button").attr("data-id", item.id).text("Remove from Cart");
       });
     })
-
+  });
+  Promise.all(cart.map(item => {
+    return promise = new Promise(function(resolve, reject) {
+      $.get(`/search/item?q=${item}`, function(data) {
+        console.log(data);
+        resolve((data));
+      }, "json")
+    })
+  })).then(value => {
+    console.log(value);
+    var addPrices = (pre, cur) => parseFloat(pre.price) + parseFloat(cur.price);
+    var total = value.reduce(addPrices);
+    console.log(total);
   });
   swap($(".shopping-cart"));
 };
+
+
+
 var makeCartItem = function(item, target) {
   var itemBar = $("<div>").addClass("item-bar col-md-11");
   var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
