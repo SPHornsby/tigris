@@ -12,6 +12,7 @@ var submitSearch = function(term) {
     }
   });
 };
+
 var displayResults = function(results) {
   var target = $("#result-list");
   $(target).empty();
@@ -22,6 +23,7 @@ var displayResults = function(results) {
   });
   swap($(".results"));
 };
+
 var makeItemBar = function(item, target, callback) {
   var itemBar = $("<div>").addClass("item-bar col-md-11");
   var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
@@ -39,12 +41,14 @@ var makeItemBar = function(item, target, callback) {
   $(itemBar).append(itemImage, itemDetails, button);
   $(target).append(itemBar);
 };
+
 var swap = function(next) {
   var current = $(".current");
   $(current).addClass("hidden");
   $(next).removeClass("hidden")
     .addClass("current");
 };
+
 var addToCart = function(item) {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/cart");
@@ -57,6 +61,7 @@ var addToCart = function(item) {
     showCart(cart);
   });
 };
+
 var removeFromCart = function(item) {
   var xhr = new XMLHttpRequest();
   xhr.open("DELETE", "/cart");
@@ -69,12 +74,19 @@ var removeFromCart = function(item) {
     showCart(cart);
   });
 };
+
 var showCart = function(cart) {
   var target = $("#cart-items");
   $(target).empty();
   if (cart.length > 3) {
     $("#bottom-checkout-button").show();
   } else $("#bottom-checkout-button").hide();
+  getItems(cart, target);
+  getDetail(cart);
+  swap($(".shopping-cart"));
+};
+
+var getItems = function(cart, target) {
   cart.forEach(function(item) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", `/search/item?q=${item}`);
@@ -86,6 +98,9 @@ var showCart = function(cart) {
       });
     })
   });
+};
+
+var getDetail = function(cart) {
   Promise.all(cart.map(item => {
     return promise = new Promise(function(resolve, reject) {
       $.get(`/search/item?q=${item}`, function(data) {
@@ -99,17 +114,20 @@ var showCart = function(cart) {
     }, 0);
     makeDetail(final);
   });
-  swap($(".shopping-cart"));
 };
 
 var makeDetail = function(cartCost) {
   var detail = $(".price-details");
   $(detail).empty();
-  var subtotal = $("<p>").text(`Subtotal: $${cartCost}`);
-  var tax = $("<p>").text(`Tax: $${cartCost*0.075}`);
-  var total = $("<p>").text(`Total: $${cartCost*1.075}`);
+  var subtotal = $("<p>").text(`Subtotal: $${displayCurrency(cartCost)}`);
+  var tax = $("<p>").text(`Tax: $${displayCurrency(cartCost*0.075)}`);
+  var total = $("<p>").text(`Total: $${displayCurrency(cartCost*1.075)}`);
   $(detail).append(subtotal, tax, total);
-}
+};
+
+var displayCurrency = function(float) {
+  return ((Math.round(float*100))/100).toFixed(2);
+};
 
 var makeCartItem = function(item, target) {
   var itemBar = $("<div>").addClass("item-bar col-md-11");
@@ -125,34 +143,39 @@ var makeCartItem = function(item, target) {
   $(itemDetails).append(itemTitle, itemCreator, itemPrice);
   $(itemBar).append(itemImage, itemDetails);
   $(target).append(itemBar);
-}
+};
+
 $(".search-button").on("click", function() {
   var input = $("#search-input").val();
   submitSearch(input);
 });
+
 $("#search-input").on("keypress", function(e) {
   if (e.keyCode === 13) {
     var input = $("#search-input").val();
     submitSearch(input);
   }
 });
+
 $("#cart-button").on("click", function() {
   addToCart();
   swap($(".shopping-cart"));
-
 });
+
 $("#home-button").on("click", function() {
   swap($(".home"));
 });
+
 $("#result-list").on("click", ".add-button", function(e) {
   var item = e.target.attributes["data-id"].value;
   addToCart(item);
 });
+
 $("#cart-items").on("click", ".remove-button", function(e) {
   var item = e.target.attributes["data-id"].value;
   removeFromCart(item);
-  //console.log(item);
 });
+
 $(function() {
   $("#bottom-checkout-button").hide();
-})
+});
