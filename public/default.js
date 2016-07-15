@@ -148,6 +148,10 @@ var makeCartItem = function(item, target) {
   $(itemBar).append(itemImage, itemDetails);
   $(target).append(itemBar);
 };
+var showCheckout = function() {
+
+  swap($(".check-out"));
+}
 
 $(".search-button").on("click", function() {
   var input = $("#search-input").val();
@@ -161,10 +165,9 @@ $("#search-input").on("keypress", function(e) {
   }
 });
 
-$("#cart-button").on("click", function() {
+$(".cart-button").on("click", function() {
   var target = $("#cart-items");
   getCart(target);
-  swap($(".shopping-cart"));
 });
 
 $("#home-button").on("click", function() {
@@ -181,6 +184,10 @@ $("#cart-items").on("click", ".remove-button", function(e) {
   var item = e.target.attributes["data-id"].value;
   var target = $("#cart-items");
   removeFromCart(item, target);
+});
+
+$(".checkout-button").on("click", function() {
+  showCheckout();
 });
 
 $(function() {
