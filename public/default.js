@@ -76,7 +76,7 @@ var removeFromCart = function(item, target) {
 var getCart = function(target){
   $.get("/cart", function(data) {
     var cart = JSON.parse(data);
-    showCart(cart, target)
+    showCart(cart, target);
   })
 };
 
@@ -86,7 +86,6 @@ var showCart = function(cart, target) {
     $("#bottom-checkout-button").show();
   } else $("#bottom-checkout-button").hide();
   getItems(cart, target);
-  getDetail(cart);
   swap($(".shopping-cart"));
 };
 
@@ -103,30 +102,45 @@ var getItems = function(cart, target) {
     })
   });
 };
-
-var getDetail = function(cart) {
-  Promise.all(cart.map(item => {
-    return promise = new Promise(function(resolve, reject) {
-      $.get(`/search/item?q=${item}`, function(data) {
-        resolve((data));
-      }, "json")
-    })
-  })).then(value => {
-    var prices = value.map((item) => parseFloat(item.price));
-    var final = prices.reduce((prev, curr) => {
-      return prev + curr;
-    }, 0);
-    makeDetail(final);
+var standaloneGet = function() {
+  return new Promise(function(resolve, reject) {
+    $.get("/cart", function(data) {
+      console.log(data);
+      resolve(JSON.parse(data));
+    });
   });
 };
 
-var makeDetail = function(cartCost) {
-  var detail = $(".price-details");
-  $(detail).empty();
+var getDetail = function(target) {
+  standaloneGet().then(function(data) {
+    console.log(data);
+    Promise.all(data.map(item => {
+      return promise = new Promise(function(resolve, reject) {
+        $.get(`/search/item?q=${item}`, function(data) {
+          resolve((data));
+        }, "json")
+      })
+    })).then(value => {
+      var prices = value.map((item) => parseFloat(item.price));
+      var final = prices.reduce((prev, curr) => {
+        return prev + curr;
+      }, 0);
+      console.log(final);
+      makeDetail(final, target);
+    });
+  });
+
+};
+
+var makeDetail = function(cartCost, target) {
+  console.log(target);
+  //var detail = $(".price-details");
+  $(target).empty();
   var subtotal = $("<p>").text(`Subtotal: $${displayCurrency(cartCost)}`);
   var tax = $("<p>").text(`Tax: $${displayCurrency(cartCost*0.075)}`);
   var total = $("<p>").text(`Total: $${displayCurrency(cartCost*1.075)}`);
-  $(detail).append(subtotal, tax, total);
+  //$(detail).append(subtotal, tax, total);
+  $(target).append(subtotal, tax, total);
 };
 
 var displayCurrency = function(float) {
@@ -167,7 +181,9 @@ $("#search-input").on("keypress", function(e) {
 
 $(".cart-button").on("click", function() {
   var target = $("#cart-items");
+  var priceTarget = $(".price-details");
   getCart(target);
+  getDetail(priceTarget);
 });
 
 $("#home-button").on("click", function() {
@@ -177,16 +193,22 @@ $("#home-button").on("click", function() {
 $("#result-list").on("click", ".add-button", function(e) {
   var item = e.target.attributes["data-id"].value;
   var target = $("#cart-items");
+  var priceTarget = $(".price-details");
   addToCart(item, target);
+  getDetail(priceTarget);
 });
 
 $("#cart-items").on("click", ".remove-button", function(e) {
   var item = e.target.attributes["data-id"].value;
   var target = $("#cart-items");
+  var priceTarget = $(".price-details");
   removeFromCart(item, target);
+  getDetail(priceTarget);
 });
 
 $(".checkout-button").on("click", function() {
+  var target = $(".price-summary");
+  getDetail(target);
   showCheckout();
 });
 
