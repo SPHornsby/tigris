@@ -49,7 +49,7 @@ var swap = function(next) {
     .addClass("current");
 };
 
-var addToCart = function(item) {
+var addToCart = function(item, target) {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/cart");
   var object = {};
@@ -57,12 +57,14 @@ var addToCart = function(item) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(object));
   xhr.addEventListener("load", function() {
-    var cart = JSON.parse(xhr.responseText);
-    showCart(cart);
+    // var cart = JSON.parse(xhr.responseText);
+    // console.log(cart);
+    getCart(target)
+    //showCart(target);
   });
 };
 
-var removeFromCart = function(item) {
+var removeFromCart = function(item, target) {
   var xhr = new XMLHttpRequest();
   xhr.open("DELETE", "/cart");
   var object = {};
@@ -70,13 +72,35 @@ var removeFromCart = function(item) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(object));
   xhr.addEventListener("load", function() {
-    var cart = JSON.parse(xhr.responseText);
-    showCart(cart);
+    // var cart = JSON.parse(xhr.responseText);
+    // showCart(cart);
+    getCart(target)
   });
 };
 
-var showCart = function(cart) {
-  var target = $("#cart-items");
+var getCart = function(target){
+  $.get("/cart", function(data) {
+    var cart = JSON.parse(data);
+    showCart(cart, target)
+  })
+};
+
+var showCart = function(cart, target) {
+  //var target = $("#cart-items");
+  // return new Promise(function (resolve, reject) {
+  //   $.get("/cart", function(data) {
+  //     resolve(data);
+  //   }, "json")
+  // }).then(function(data) {
+  //   $(target).empty();
+  //   if (data.length > 3) {
+  //     $("#bottom-checkout-button").show();
+  //   } else $("#bottom-checkout-button").hide();
+  //   getItems(data, target);
+  //   getDetail(data);
+  //   swap($(".shopping-cart"));
+  // })
+
   $(target).empty();
   if (cart.length > 3) {
     $("#bottom-checkout-button").show();
@@ -158,7 +182,8 @@ $("#search-input").on("keypress", function(e) {
 });
 
 $("#cart-button").on("click", function() {
-  addToCart();
+  var target = $("#cart-items");
+  getCart(target);
   swap($(".shopping-cart"));
 });
 
@@ -168,12 +193,14 @@ $("#home-button").on("click", function() {
 
 $("#result-list").on("click", ".add-button", function(e) {
   var item = e.target.attributes["data-id"].value;
-  addToCart(item);
+  var target = $("#cart-items");
+  addToCart(item, target);
 });
 
 $("#cart-items").on("click", ".remove-button", function(e) {
   var item = e.target.attributes["data-id"].value;
-  removeFromCart(item);
+  var target = $("#cart-items");
+  removeFromCart(item, target);
 });
 
 $(function() {
