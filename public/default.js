@@ -57,10 +57,7 @@ var addToCart = function(item, target) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(object));
   xhr.addEventListener("load", function() {
-    // var cart = JSON.parse(xhr.responseText);
-    // console.log(cart);
     getCart(target)
-    //showCart(target);
   });
 };
 
@@ -72,8 +69,6 @@ var removeFromCart = function(item, target) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(object));
   xhr.addEventListener("load", function() {
-    // var cart = JSON.parse(xhr.responseText);
-    // showCart(cart);
     getCart(target)
   });
 };
@@ -86,21 +81,6 @@ var getCart = function(target){
 };
 
 var showCart = function(cart, target) {
-  //var target = $("#cart-items");
-  // return new Promise(function (resolve, reject) {
-  //   $.get("/cart", function(data) {
-  //     resolve(data);
-  //   }, "json")
-  // }).then(function(data) {
-  //   $(target).empty();
-  //   if (data.length > 3) {
-  //     $("#bottom-checkout-button").show();
-  //   } else $("#bottom-checkout-button").hide();
-  //   getItems(data, target);
-  //   getDetail(data);
-  //   swap($(".shopping-cart"));
-  // })
-
   $(target).empty();
   if (cart.length > 3) {
     $("#bottom-checkout-button").show();
