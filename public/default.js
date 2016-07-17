@@ -46,7 +46,6 @@ var swap = function(next) {
     .addClass("current");
 };
 
-
 var addToCart = function(item, target) {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/cart");
@@ -95,6 +94,7 @@ var getItems = function(cart, target) {
     })
   });
 };
+
 var getCart = function() {
   return new Promise(function(resolve, reject) {
     $.get("/cart", function(data) {
@@ -119,7 +119,6 @@ var getDetail = function(target) {
       makeDetail(final, target);
     });
   });
-
 };
 
 var makeDetail = function(cartCost, target) {
@@ -182,8 +181,8 @@ var showOrder = function(order, target) {
   $(target).empty();
   var block = $("<div>").addClass("well");
   var title = $("<h3>").text("Order Confirmation:").addClass("text-center");
-  var date = $("<div>").text(new Date(order.date));
-  var payment = $("<div>").text(order.payment);
+  var date = $("<div>").text(`Ordered on: ${new Date(order.date)}`);
+  var payment = $("<div>").text(`Paid with: ${order.payment}`);
   $(block).append(title, date, payment);
   $(target).append(block);
 };
