@@ -7,8 +7,6 @@ var submitSearch = function(term) {
     if (xhr.responseText) {
       var results = JSON.parse(xhr.responseText);
       displayResults(results);
-    } else {
-      console.log("No response");
     }
   });
 };
@@ -36,7 +34,6 @@ var makeItemBar = function(item, target, callback) {
   var itemCreator = $("<div>").addClass("item-creator row").text(creator);
   var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
   var button =callback();
-  //var cartButton = $("<button>").addClass("btn btn-success add-button").attr("data-id", item.id).text("Add to Cart");
   $(itemDetails).append(itemTitle, itemCreator, itemPrice);
   $(itemBar).append(itemImage, itemDetails, button);
   $(target).append(itemBar);
@@ -49,6 +46,7 @@ var swap = function(next) {
     .addClass("current");
 };
 
+
 var addToCart = function(item, target) {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/cart");
@@ -57,7 +55,7 @@ var addToCart = function(item, target) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(object));
   xhr.addEventListener("load", function() {
-    getCart(target)
+    showCart(target)
   });
 };
 
@@ -69,24 +67,19 @@ var removeFromCart = function(item, target) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(object));
   xhr.addEventListener("load", function() {
-    getCart(target)
+    showCart(target)
   });
 };
 
-var getCart = function(target){
-  $.get("/cart", function(data) {
-    var cart = JSON.parse(data);
-    showCart(cart, target);
-  })
-};
-
-var showCart = function(cart, target) {
-  $(target).empty();
-  if (cart.length > 3) {
-    $("#bottom-checkout-button").show();
-  } else $("#bottom-checkout-button").hide();
-  getItems(cart, target);
-  swap($(".shopping-cart"));
+var showCart = function(target) {
+  getCart().then(function(data){
+    $(target).empty();
+    if (data.length > 3) {
+      $("#bottom-checkout-button").show();
+    } else $("#bottom-checkout-button").hide();
+    getItems(data, target);
+    swap($(".shopping-cart"));
+  });
 };
 
 var getItems = function(cart, target) {
@@ -102,22 +95,21 @@ var getItems = function(cart, target) {
     })
   });
 };
-var standaloneGet = function() {
+var getCart = function() {
   return new Promise(function(resolve, reject) {
     $.get("/cart", function(data) {
-      console.log(data);
       resolve(JSON.parse(data));
     });
   });
 };
 
 var getDetail = function(target) {
-  standaloneGet().then(function(data) {
-    console.log(data);
+  getCart().then(function(data) {
     Promise.all(data.map(item => {
       return promise = new Promise(function(resolve, reject) {
         $.get(`/search/item?q=${item}`, function(data) {
-          resolve((data));
+          console.log(data);
+          resolve(data);
         }, "json")
       })
     })).then(value => {
@@ -125,7 +117,6 @@ var getDetail = function(target) {
       var final = prices.reduce((prev, curr) => {
         return prev + curr;
       }, 0);
-      console.log(final);
       makeDetail(final, target);
     });
   });
@@ -133,13 +124,10 @@ var getDetail = function(target) {
 };
 
 var makeDetail = function(cartCost, target) {
-  console.log(target);
-  //var detail = $(".price-details");
   $(target).empty();
   var subtotal = $("<p>").text(`Subtotal: $${displayCurrency(cartCost)}`);
   var tax = $("<p>").text(`Tax: $${displayCurrency(cartCost*0.075)}`);
-  var total = $("<p>").text(`Total: $${displayCurrency(cartCost*1.075)}`);
-  //$(detail).append(subtotal, tax, total);
+  var total = $("<p>").addClass("payment-total").text(`Total: $${displayCurrency(cartCost*1.075)}`);
   $(target).append(subtotal, tax, total);
 };
 
@@ -162,10 +150,42 @@ var makeCartItem = function(item, target) {
   $(itemBar).append(itemImage, itemDetails);
   $(target).append(itemBar);
 };
-var showCheckout = function() {
 
+var showCheckout = function() {
   swap($(".check-out"));
-}
+};
+
+var getPayment = function() {
+  return $("input[type='radio'][name='payment']:checked").val();
+};
+
+var submitOrder = function(order) {
+  return new Promise(function(resolve, reject) {
+    var data = order;
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", "/user");
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.send(JSON.stringify(data));
+    xhr.addEventListener("load", function(){
+      resolve(JSON.parse(xhr.responseText));
+    });
+  });
+};
+
+var showConfirmation = function(data) {
+  var lastOrder = data.pop();
+  var target = $(".orders");
+  showOrder(lastOrder, target);
+  swap($(".confirmation"));
+};
+
+var showOrder = function(order, target) {
+  var block = $("<li>");
+  var date = $("<div>").text(new Date(order.date));
+  var payment = $("<div>").text(order.payment);
+  $(block).append(date, payment);
+  $(target).append(block);
+};
 
 $(".search-button").on("click", function() {
   var input = $("#search-input").val();
@@ -182,7 +202,7 @@ $("#search-input").on("keypress", function(e) {
 $(".cart-button").on("click", function() {
   var target = $("#cart-items");
   var priceTarget = $(".price-details");
-  getCart(target);
+  showCart(target);
   getDetail(priceTarget);
 });
 
@@ -210,6 +230,17 @@ $(".checkout-button").on("click", function() {
   var target = $(".price-summary");
   getDetail(target);
   showCheckout();
+});
+
+$(".pay-button").on("click", function(e) {
+  var payment = getPayment();
+  getCart().then(function(cart) {
+    var date = Date.now();
+    var order = {date: date, cart: cart, payment: payment};
+    submitOrder(order).then(function(data) {
+      showConfirmation(data);
+    });
+  });
 });
 
 $(function() {
