@@ -7,11 +7,10 @@ var submitSearch = function(term) {
     if (xhr.responseText) {
       var results = JSON.parse(xhr.responseText);
       displayResults(results);
-    } else {
-      console.log("No response");
     }
   });
 };
+
 var displayResults = function(results) {
   var target = $("#result-list");
   $(target).empty();
@@ -22,6 +21,7 @@ var displayResults = function(results) {
   });
   swap($(".results"));
 };
+
 var makeItemBar = function(item, target, callback) {
   var itemBar = $("<div>").addClass("item-bar col-md-11");
   var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
@@ -34,18 +34,19 @@ var makeItemBar = function(item, target, callback) {
   var itemCreator = $("<div>").addClass("item-creator row").text(creator);
   var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
   var button =callback();
-  //var cartButton = $("<button>").addClass("btn btn-success add-button").attr("data-id", item.id).text("Add to Cart");
   $(itemDetails).append(itemTitle, itemCreator, itemPrice);
   $(itemBar).append(itemImage, itemDetails, button);
   $(target).append(itemBar);
 };
+
 var swap = function(next) {
   var current = $(".current");
   $(current).addClass("hidden");
   $(next).removeClass("hidden")
     .addClass("current");
 };
-var addToCart = function(item) {
+
+var addToCart = function(item, target) {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/cart");
   var object = {};
@@ -53,11 +54,11 @@ var addToCart = function(item) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(object));
   xhr.addEventListener("load", function() {
-    var cart = JSON.parse(xhr.responseText);
-    showCart(cart);
+    showCart(target)
   });
 };
-var removeFromCart = function(item) {
+
+var removeFromCart = function(item, target) {
   var xhr = new XMLHttpRequest();
   xhr.open("DELETE", "/cart");
   var object = {};
@@ -65,33 +66,73 @@ var removeFromCart = function(item) {
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(object));
   xhr.addEventListener("load", function() {
-    var cart = JSON.parse(xhr.responseText);
-    showCart(cart);
+    showCart(target)
   });
 };
-var showCart = function(cart) {
-  // var xhr = new XMLHttpRequest();
-  // xhr.open("GET", "/cart")
-  // xhr.addEventListener("load", function() {
-  // })
-  console.log("showcart");
-  var target = $("#cart-items");
-  $(target).empty();
+
+var showCart = function(target) {
+  getCart().then(function(data){
+    $(target).empty();
+    if (data.length > 3) {
+      $("#bottom-checkout-button").show();
+    } else $("#bottom-checkout-button").hide();
+    getItems(data, target);
+    swap($(".shopping-cart"));
+  });
+};
+
+var getItems = function(cart, target) {
   cart.forEach(function(item) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", `/search/item?q=${item}`);
     xhr.send();
     xhr.addEventListener("load", function() {
-      console.log(xhr.responseText);
       var item = JSON.parse(xhr.responseText);
       makeItemBar(item, target, function() {
         return $("<button>").addClass("btn btn-danger remove-button").attr("data-id", item.id).text("Remove from Cart");
       });
     })
-
   });
-  swap($(".shopping-cart"));
 };
+
+var getCart = function() {
+  return new Promise(function(resolve, reject) {
+    $.get("/cart", function(data) {
+      resolve(JSON.parse(data));
+    });
+  });
+};
+
+var getDetail = function(target) {
+  getCart().then(function(data) {
+    Promise.all(data.map(item => {
+      return promise = new Promise(function(resolve, reject) {
+        $.get(`/search/item?q=${item}`, function(data) {
+          resolve(data);
+        }, "json")
+      })
+    })).then(value => {
+      var prices = value.map((item) => parseFloat(item.price));
+      var final = prices.reduce((prev, curr) => {
+        return prev + curr;
+      }, 0);
+      makeDetail(final, target);
+    });
+  });
+};
+
+var makeDetail = function(cartCost, target) {
+  $(target).empty();
+  var subtotal = $("<p>").text(`Subtotal: $${displayCurrency(cartCost)}`);
+  var tax = $("<p>").text(`Tax: $${displayCurrency(cartCost*0.075)}`);
+  var total = $("<p>").addClass("payment-total").text(`Total: $${displayCurrency(cartCost*1.075)}`);
+  $(target).append(subtotal, tax, total);
+};
+
+var displayCurrency = function(float) {
+  return ((Math.round(float*100))/100).toFixed(2);
+};
+
 var makeCartItem = function(item, target) {
   var itemBar = $("<div>").addClass("item-bar col-md-11");
   var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
@@ -106,31 +147,102 @@ var makeCartItem = function(item, target) {
   $(itemDetails).append(itemTitle, itemCreator, itemPrice);
   $(itemBar).append(itemImage, itemDetails);
   $(target).append(itemBar);
-}
+};
+
+var showCheckout = function() {
+  swap($(".check-out"));
+};
+
+var getPayment = function() {
+  return $("input[type='radio'][name='payment']:checked").val();
+};
+
+var submitOrder = function(order) {
+  return new Promise(function(resolve, reject) {
+    var data = order;
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", "/user");
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.send(JSON.stringify(data));
+    xhr.addEventListener("load", function(){
+      resolve(JSON.parse(xhr.responseText));
+    });
+  });
+};
+
+var showConfirmation = function(data) {
+  var lastOrder = data.pop();
+  var target = $(".orders");
+  showOrder(lastOrder, target);
+  swap($(".confirmation"));
+};
+
+var showOrder = function(order, target) {
+  $(target).empty();
+  var block = $("<div>").addClass("well");
+  var title = $("<h3>").text("Order Confirmation:").addClass("text-center");
+  var date = $("<div>").text(`Ordered on: ${new Date(order.date)}`);
+  var payment = $("<div>").text(`Paid with: ${order.payment}`);
+  $(block).append(title, date, payment);
+  $(target).append(block);
+};
+
 $(".search-button").on("click", function() {
   var input = $("#search-input").val();
   submitSearch(input);
 });
+
 $("#search-input").on("keypress", function(e) {
   if (e.keyCode === 13) {
     var input = $("#search-input").val();
     submitSearch(input);
   }
 });
-$("#cart-button").on("click", function() {
-  addToCart();
-  swap($(".shopping-cart"));
 
+$(".cart-button").on("click", function() {
+  var target = $("#cart-items");
+  var priceTarget = $(".price-details");
+  showCart(target);
+  getDetail(priceTarget);
 });
+
 $("#home-button").on("click", function() {
   swap($(".home"));
 });
+
 $("#result-list").on("click", ".add-button", function(e) {
   var item = e.target.attributes["data-id"].value;
-  addToCart(item);
+  var target = $("#cart-items");
+  var priceTarget = $(".price-details");
+  addToCart(item, target);
+  getDetail(priceTarget);
 });
+
 $("#cart-items").on("click", ".remove-button", function(e) {
   var item = e.target.attributes["data-id"].value;
-  removeFromCart(item);
-  //console.log(item);
+  var target = $("#cart-items");
+  var priceTarget = $(".price-details");
+  removeFromCart(item, target);
+  getDetail(priceTarget);
+});
+
+$(".checkout-button").on("click", function() {
+  var target = $(".price-summary");
+  getDetail(target);
+  showCheckout();
+});
+
+$(".pay-button").on("click", function(e) {
+  var payment = getPayment();
+  getCart().then(function(cart) {
+    var date = Date.now();
+    var order = {date: date, cart: cart, payment: payment};
+    submitOrder(order).then(function(data) {
+      showConfirmation(data);
+    });
+  });
+});
+
+$(function() {
+  $("#bottom-checkout-button").hide();
 });

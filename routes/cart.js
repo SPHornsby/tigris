@@ -6,22 +6,21 @@ cart.get("/", function(req, res) {
   var user = users.filter(function(user) {
     return user.user == sessionID;
   });
-  res.send(user.cart);
+  res.send(JSON.stringify(user[0].cart));
 });
+
 cart.post("/", function(req, res) {
-  var item;
-  var cart;
   var sessionID = req.cookies.sessionID;
   var user = users.filter(function(user) {
     return user.user == sessionID;
   });
   if (req.body.dataID) {
-    item = JSON.parse(req.body.dataID);
+    var item = JSON.parse(req.body.dataID);
     user[0].cart.push(item);
   }
-  cart = user[0].cart;
-  res.send(cart);
+  res.send();
 });
+
 cart.delete("/", function(req, res) {
   var item = JSON.parse(req.body.dataID);
   var sessionID = req.cookies.sessionID;
@@ -31,9 +30,7 @@ cart.delete("/", function(req, res) {
   var cart = user[0].cart;
   var index = cart.indexOf(item);
   cart.splice(index, 1);
-  console.log(item);
-
-  res.send(cart);
+  res.send();
 });
 
 module.exports = cart;

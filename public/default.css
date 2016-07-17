@@ -15,3 +15,10 @@ nav {
 .item-creator {
   font-style: italic;
 }
+.checkout-button {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.payment-total {
+  font-weight: bold;
+}

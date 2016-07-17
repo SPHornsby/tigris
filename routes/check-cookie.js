@@ -19,7 +19,7 @@ var checkCookie = function(req, res, next) {
 };
 
 var createUser = function(id){
-  users.push({user: id, cart:[]});
+  users.push({user: id, cart:[], orders:[]});
   console.log(users);
 };
 var checkForUser = function(id) {

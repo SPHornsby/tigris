@@ -31,7 +31,7 @@
                   </div>
                 </div>
                 <div class="col-md-1 ">
-                  <button id="cart-button" type="button" name="button" class="btn btn-default">
+                  <button id="" type="button" name="button" class="btn btn-default cart-button">
                     Cart
                   </button>
                 </div>
@@ -52,9 +52,62 @@
         </div>
       </div>
       <div class="row shopping-cart hidden">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-sm-8 col-sm-offset-2">
+          <div class="row">
+            <div class="col-sm-2 col-sm-offset-10">
+              <button type="button" name="checkout" class="btn btn-success checkout-button">Check Out!</button>
+            </div>
+          </div>
           <ul id="cart-items">
           </ul>
+          <div class="row checkout-bottom">
+            <div class="col-sm-2 col-sm-offset-10">
+              <div class="price-details text-right">
+              </div>
+              <button type="button" name="checkout" class="btn btn-success checkout-button" id="bottom-checkout-button">Check Out!</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row check-out hidden">
+        <div class="col-sm-8 col-sm-offset-2">
+          <div class="row">
+            <div class="payment col-sm-3  col-sm-offset-2 well">
+              <h4>Payment: </h4>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="payment" value="Credit Card" checked>
+                  Credit Card on file
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" name="payment" value="Gift Card">
+                  Gift Card
+                </label>
+              </div>
+            </div>
+            <div class="price-summary col-sm-3 col-sm-offset-2 well">
+
+            </div>
+          </div>
+          <div class="row">
+
+            <div class="col-sm-2 col-sm-offset-1">
+              <button class="btn btn-default cart-button" type="button" name="button">Back to Cart</button>
+            </div>
+            <div class="col-sm-2 col-sm-offset-6">
+              <button class="btn btn-warning pay-button" type="button" name="pay">Submit Order</button>
+            </div>
+          </div>
+          <ul class="checkout-cart">
+
+          </ul>
+        </div>
+      </div>
+      <div class="confirmation hidden">
+        <div class="col-sm-8 col-sm-offset-2 orders">
+
         </div>
       </div>
     </div>
