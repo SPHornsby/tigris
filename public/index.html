@@ -72,18 +72,18 @@
       <div class="row check-out hidden">
         <div class="col-sm-8 col-sm-offset-2">
           <div class="row">
-            <div class="shipping col-sm-3  col-sm-offset-2 well">
-              <h4>Shipping: </h4>
+            <div class="payment col-sm-3  col-sm-offset-2 well">
+              <h4>Payment: </h4>
               <div class="radio">
                 <label>
-                  <input type="radio" name="shipping" value="s" checked>
-                  Standard
+                  <input type="radio" name="payment" value="Credit Card" checked>
+                  Credit Card on file
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input type="radio" name="shipping" value="n">
-                  Next Day
+                  <input type="radio" name="payment" value="Gift Card">
+                  Gift Card
                 </label>
               </div>
             </div>
@@ -104,6 +104,12 @@
 
           </ul>
         </div>
+      </div>
+      <div class="confirmation hidden">
+        <p>Confirm</p>
+        <ul class="orders">
+
+        </ul>
       </div>
     </div>
 <script src="default.js"></script>
