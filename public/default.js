@@ -108,7 +108,6 @@ var getDetail = function(target) {
     Promise.all(data.map(item => {
       return promise = new Promise(function(resolve, reject) {
         $.get(`/search/item?q=${item}`, function(data) {
-          console.log(data);
           resolve(data);
         }, "json")
       })
@@ -180,10 +179,12 @@ var showConfirmation = function(data) {
 };
 
 var showOrder = function(order, target) {
-  var block = $("<li>");
+  $(target).empty();
+  var block = $("<div>").addClass("well");
+  var title = $("<h3>").text("Order Confirmation:").addClass("text-center");
   var date = $("<div>").text(new Date(order.date));
   var payment = $("<div>").text(order.payment);
-  $(block).append(date, payment);
+  $(block).append(title, date, payment);
   $(target).append(block);
 };
 
