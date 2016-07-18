@@ -174,6 +174,21 @@ var submitOrder = function(order) {
   });
 };
 
+var submitReview = function(item, review) {
+  return new Promise(function(resolve, reject) {
+    var data = {item: item, review: review};
+    $.ajax({
+      method: "PUT",
+      url: "/item",
+      headers: { "Content-type": "application/json"},
+      data: data,
+      success: function() {
+        resolve();
+      }
+    });
+  });
+}
+
 var showConfirmation = function(data) {
   var lastOrder = data.pop();
   var target = $(".orders");

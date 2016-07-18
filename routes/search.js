@@ -13,6 +13,10 @@ search.get("/item", function(req, res) {
   }
 });
 
+search.put("/item", function(req, res) {
+  
+});
+
 search.get("/", function(req, res) {
   var searchTerm = req.query.q.toLowerCase();
   var complete = completeSearch(items, searchTerm);
