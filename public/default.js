@@ -207,8 +207,26 @@ var showOrder = function(order, target) {
 };
 
 var writeReview = function(item) {
+  var target = $(".review-panel");
+  //TODO get the item title from the row with the review button
+  $(".review-heading").text(`Review for item: ${item}`)
   swap($(".review"));
-  $(".review-panel").text(item);
+  makeReview(target, item);
+};
+
+var makeReview = function(target, item) {
+  $(target).empty();
+
+  var input = $("<textarea>").attr({
+    class: "form-control",
+    rows: 3,
+    placeholder: "Enter review here..."
+  });
+  var button = $("<button>").attr({
+    "data-id": item,
+    class: "btn btn-success add-review"
+  }).text("Submit review");
+  $(target).append(input, button);
 };
 
 $(".search-button").on("click", function() {
