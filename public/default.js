@@ -90,8 +90,8 @@ var getItems = function(cart, target) {
       var item = JSON.parse(xhr.responseText);
       makeItemBar(item, target, function() {
         var div = $("<div>");
-        var remove = $("<button>").addClass("btn btn-danger remove-button col-sm-2").attr("data-id", item.id).text("Remove from Cart");
-        var review = $("<button>").addClass("btn btn-warning review-button c0l-sm-2 col-sm-offset-1").attr("data-id", item.id).text("Add Review");
+        var remove = $("<button>").addClass("btn btn-danger remove-button col-sm-3").attr("data-id", item.id).text("Remove from Cart");
+        var review = $("<button>").addClass("btn btn-warning review-button col-sm-2 col-sm-offset-1").attr("data-id", item.id).text("Add Review");
         $(div).append(remove, review);
         return div;
       });
@@ -191,6 +191,11 @@ var showOrder = function(order, target) {
   $(target).append(block);
 };
 
+var writeReview = function(item) {
+  swap($(".review"));
+  $(".review-panel").text(item);
+};
+
 $(".search-button").on("click", function() {
   var input = $("#search-input").val();
   submitSearch(input);
@@ -245,6 +250,11 @@ $(".pay-button").on("click", function(e) {
       showConfirmation(data);
     });
   });
+});
+
+$("#cart-items").on("click", ".review-button", function(e) {
+  var item = e.target.attributes["data-id"].value;
+  writeReview(item);
 });
 
 $(function() {
