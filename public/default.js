@@ -33,7 +33,7 @@ var makeItemBar = function(item, target, callback) {
   }
   var itemCreator = $("<div>").addClass("item-creator row").text(creator);
   var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
-  var button =callback();
+  var button = callback();
   $(itemDetails).append(itemTitle, itemCreator, itemPrice);
   $(itemBar).append(itemImage, itemDetails, button);
   $(target).append(itemBar);
@@ -89,7 +89,11 @@ var getItems = function(cart, target) {
     xhr.addEventListener("load", function() {
       var item = JSON.parse(xhr.responseText);
       makeItemBar(item, target, function() {
-        return $("<button>").addClass("btn btn-danger remove-button").attr("data-id", item.id).text("Remove from Cart");
+        var div = $("<div>");
+        var remove = $("<button>").addClass("btn btn-danger remove-button col-sm-2").attr("data-id", item.id).text("Remove from Cart");
+        var review = $("<button>").addClass("btn btn-warning review-button c0l-sm-2 col-sm-offset-1").attr("data-id", item.id).text("Add Review");
+        $(div).append(remove, review);
+        return div;
       });
     })
   });
