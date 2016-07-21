@@ -27,14 +27,20 @@ var makeItemBar = function(item, target, callback) {
   var itemImage = $("<img>").attr("src", "./placeholder.png").addClass("col-md-2");
   var itemDetails = $("<div>").addClass("item-details col-md-4");
   var itemTitle = $("<div>").addClass("item-title row").text(item.name);
+  var reviews = "--";
+  if (item.reviews.length > 0) {
+    reviews = item.reviews[item.reviews.length-1];
+  }
+  var reviewLink = $("<div>").addClass("review-link").text(reviews);
   var creator = "--";
+
   if (item.creator.length > 0) {
     creator = item.creator;
   }
   var itemCreator = $("<div>").addClass("item-creator row").text(creator);
   var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
   var button = callback();
-  $(itemDetails).append(itemTitle, itemCreator, itemPrice);
+  $(itemDetails).append(itemTitle, itemCreator, itemPrice, reviewLink);
   $(itemBar).append(itemImage, itemDetails, button);
   $(target).append(itemBar);
 };
@@ -176,7 +182,7 @@ var submitOrder = function(order) {
 
 var submitReview = function(item, review) {
   return new Promise(function(resolve, reject) {
-    var data = {item: item, review: review};
+    var data = JSON.stringify({item: item, review: review});
     $.ajax({
       method: "PUT",
       url: "/item",
@@ -221,7 +227,7 @@ var makeReview = function(target, item) {
     class: "form-control",
     rows: 3,
     placeholder: "Enter review here..."
-  });
+  }).addClass("review-text");
   var button = $("<button>").attr({
     "data-id": item,
     class: "btn btn-success add-review"
@@ -288,6 +294,12 @@ $(".pay-button").on("click", function(e) {
 $("#cart-items").on("click", ".review-button", function(e) {
   var item = e.target.attributes["data-id"].value;
   writeReview(item);
+});
+
+$(".review").on("click", ".add-review", function(e) {
+  var item = e.target.attributes["data-id"].value;
+  var review = $(".review-text").val();
+  submitReview(item, review);
 });
 
 $(function() {
