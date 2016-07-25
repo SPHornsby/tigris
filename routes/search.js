@@ -16,6 +16,18 @@ var url = "mongodb://localhost:27017/tigris";
 // });
 
 
+// search.get("/item", function(req, res) {
+//   var itemNumber = parseInt(req.query.q, 10);
+//   if (itemNumber === itemNumber) {
+//     var item = idSearch(items, itemNumber);
+//     res.send(item);
+//   } else {
+//     console.log("Not valid");
+//     res.send();
+//   }
+// });
+
+
 search.put("/item", function(req, res) {
 
 });
