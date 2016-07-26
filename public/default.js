@@ -47,7 +47,7 @@ var makeItemBar = function(item, target, callback) {
 
 var swap = function(next) {
   var current = $(".current");
-  $(current).addClass("hidden");
+  $(current).addClass("hidden").removeClass("current");
   $(next).removeClass("hidden")
     .addClass("current");
 };
@@ -292,14 +292,16 @@ $(".pay-button").on("click", function(e) {
 });
 
 $("#cart-items").on("click", ".review-button", function(e) {
+  console.log(e);
   var item = e.target.attributes["data-id"].value;
   writeReview(item);
 });
 
 $(".review").on("click", ".add-review", function(e) {
+  console.log(e);
   var item = e.target.attributes["data-id"].value;
   var review = $(".review-text").val();
-  submitReview(item, review);
+  submitReview(item, review).then(showCart($("#cart-items")));
 });
 
 $(function() {
