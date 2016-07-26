@@ -31,7 +31,8 @@ var makeItemBar = function(item, target, callback) {
   if (item.reviews.length > 0) {
     reviews = item.reviews[item.reviews.length-1];
   }
-  var reviewLink = $("<div>").addClass("review-link").text(reviews);
+  var reviewLink = $("<div>").addClass("review-link").text(`${item.reviews.length} reviews`);
+  var topReview = $("<div>").addClass("review-body").text(reviews);
   var creator = "--";
 
   if (item.creator.length > 0) {
@@ -40,7 +41,7 @@ var makeItemBar = function(item, target, callback) {
   var itemCreator = $("<div>").addClass("item-creator row").text(creator);
   var itemPrice = $("<div>").addClass("item-price row").text(`$${item.price}`);
   var button = callback();
-  $(itemDetails).append(itemTitle, itemCreator, itemPrice, reviewLink);
+  $(itemDetails).append(itemTitle, itemCreator, itemPrice, reviewLink, topReview);
   $(itemBar).append(itemImage, itemDetails, button);
   $(target).append(itemBar);
 };
